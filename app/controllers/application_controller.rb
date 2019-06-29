@@ -8,7 +8,16 @@ class ApplicationController < ActionController::API
   end 
 
   def decode(token)
-    #returns token: {"user_id"=>2}
-    JWT.decode(token, secret_key, true, {algorithm: 'HS256'})[0]
+    #returns payload: {"user_id"=>2}
+    JWT.decode(token, some_key, true, {algorithm: 'HS256'})[0]
   end 
+
+  def current_user
+    # server has access to request obj when fetch is being made. Take out 'Bearer ' to get token
+    token = request.headers['Authentication'].split(' ')[1]
+    if token
+      payload = decode(token)
+      @user = User.find_by(id: payload["user_id"])
+    end 
+  end
 end

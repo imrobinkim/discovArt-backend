@@ -14,10 +14,12 @@ class ApplicationController < ActionController::API
 
   def current_user
     # server has access to request obj when fetch is being made. Take out 'Bearer ' to get token
-    token = request.headers['Authentication'].split(' ')[1]
-    if token
-      payload = decode(token)
-      @user = User.find_by(id: payload["user_id"])
-    end 
+    if request.headers['Authentication']
+      token = request.headers['Authentication'].split(' ')[1]
+      if token
+        payload = decode(token)
+        @user = User.find_by(id: payload["user_id"])
+      end 
+    end
   end
 end

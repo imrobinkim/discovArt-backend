@@ -6,11 +6,10 @@ class Api::V1::AuthController < ApplicationController
 
     #if user exists & password after hashing and salting matches password_digest in db...
     if @user && @user.authenticate(user_login_params[:password])
-      token = encode_token({ user_id: @user.id })
       render json: {
         user: @user,
-        token: token,
-        message: "Successfully logged in"
+        token: encode({ user_id: @user.id }),
+        message: "Successfully logged in",
         error: false
       }, status: :accepted
     else 
@@ -18,6 +17,7 @@ class Api::V1::AuthController < ApplicationController
         message: "Invalid email or password",
         error: true
       }, status: :unauthorized
+    end
   end 
 
   private

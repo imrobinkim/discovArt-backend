@@ -4,6 +4,7 @@ class ApplicationController < ActionController::API
   end 
 
   def encode(payload)
+    # {user_id: 2}
     JWT.encode(payload, some_key, 'HS256')
   end 
 

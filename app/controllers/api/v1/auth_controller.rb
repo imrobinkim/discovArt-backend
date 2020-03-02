@@ -1,8 +1,9 @@
 class Api::V1::AuthController < ApplicationController
   #controller for when already existing user is logging back in
-  
+
   def create #POST /api/v1/login
     @user = User.find_by(email: user_login_params[:email])
+    # byebug
 
     #if user exists & password after hashing and salting matches password_digest in db...
     if @user && @user.authenticate(user_login_params[:password])

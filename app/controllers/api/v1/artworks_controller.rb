@@ -1,11 +1,18 @@
 class Api::V1::ArtworksController < ApplicationController
 
   def initial
-    url = 'https://api.thewalters.org/v1/objects.json?keyword=landscape&classification=painting&medium=oil&pageSize=100&apikey='+api_key
+    
+    if params['page']
+      page = params['page']
+    else 
+      page = '1'
+    end
+      
+    url = 'https://api.harvardartmuseums.org/object?keyword=watercolor&size=18&page'+page+'&apikey='+api_key
     response = RestClient.get(url).body
     render json: response
   end 
-
+  
   def search_by_keyword
     keyword = params['keyword']
     if keyword.include?(' ')
@@ -16,14 +23,14 @@ class Api::V1::ArtworksController < ApplicationController
         keyword = keyword + '%20' + x
       end
     end
-    url = 'https://api.thewalters.org/v1/objects.json?keyword='+keyword+'&apikey='+api_key
+    url = 'https://api.harvardartmuseums.org/object?hasimage=1&size=18&keyword='+keyword+'&apikey='+api_key
     response = RestClient.get(url).body
     render json: response
   end
 
   def artwork_detail
     artwork_id = params[:id]
-    url = 'https://api.thewalters.org/v1/objects/'+artwork_id+'.json?apikey='+api_key
+    url = 'https://api.harvardartmuseums.org/object/'+artwork_id+'?apikey='+api_key
     response = RestClient.get(url).body
     render json: response
   end 
@@ -31,6 +38,6 @@ class Api::V1::ArtworksController < ApplicationController
   private 
 
   def api_key
-    Rails.application.credentials.walters_api
+    Rails.application.credentials.harvard_art_musuem_api
   end
 end

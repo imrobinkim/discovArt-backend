@@ -8,6 +8,7 @@ class Api::V1::UsersController < ApplicationController
   end 
 
   def create #POST /api/v1/users
+    # byebug
     @user = User.create(user_params)
 
     if @user.valid?

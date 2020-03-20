@@ -1,6 +1,5 @@
 class Api::V1::UsersController < ApplicationController
   def profile #GET /api/v1/profile
-    # byebug
     render json: {
       user: current_user,
       error: false
@@ -8,7 +7,6 @@ class Api::V1::UsersController < ApplicationController
   end 
 
   def create #POST /api/v1/users
-    # byebug
     @user = User.create(user_params)
 
     if @user.valid?
@@ -19,8 +17,9 @@ class Api::V1::UsersController < ApplicationController
       }, status: :created
     else 
       render json: {
-        message: "couldn't create user",
-        error: @user.errors.full_messages
+        message: "Sorry, we couldn't create a new user.",
+        errors: @user.errors.full_messages,
+        error: true
       }, status: :not_acceptable
     end
   end 

@@ -1,11 +1,10 @@
 class Api::V1::AuthController < ApplicationController
-  #controller for when already existing user is logging back in
+  # Controller for when already existing user is logging back in
 
   def create #POST /api/v1/login
     @user = User.find_by(email: user_login_params[:email])
-    # byebug
 
-    #if user exists & password after hashing and salting matches password_digest in db...
+    # If user exists & password after hashing and salting matches password_digest in db...
     if @user && @user.authenticate(user_login_params[:password])
       render json: {
         user: @user,
@@ -13,9 +12,20 @@ class Api::V1::AuthController < ApplicationController
         message: "Successfully logged in",
         error: false
       }, status: :accepted
-    else 
+    elsif @user
+      # If user exists BUT password doesn't match
       render json: {
-        message: "Invalid email or password",
+        errors: {
+          password: "Invalid password. Please try again."
+        },
+        error: true
+      }, status: :unauthorized
+    else
+      # If user DOESN'T exist in db
+      render json: {
+        errors: {
+          email: "Sorry, we couldn't find an account with this email."
+        },
         error: true
       }, status: :unauthorized
     end
@@ -28,3 +38,14 @@ class Api::V1::AuthController < ApplicationController
     params.require(:user).permit(:email, :password)
   end
 end
+
+# ------------- Notes on Errors ----------------- #
+# Error Response object sent back follows format (after translated to json):
+# {
+#   errors: {
+#     password: "Invalid password. Please try again."
+#   }, 
+#   error: true
+# }
+# 
+# On frontend, we set local state in LoginForm with response.errors if user is unable to log in successfully.

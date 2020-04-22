@@ -24,6 +24,11 @@ class Api::V1::UsersController < ApplicationController
     end
   end 
 
+  # TODO: DELETE (created just to check out user serializer)
+  def index
+    render json: User.all
+  end
+
   private 
 
   def user_params

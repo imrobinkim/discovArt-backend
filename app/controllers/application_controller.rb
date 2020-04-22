@@ -19,7 +19,8 @@ class ApplicationController < ActionController::API
       token = request.headers['Authentication'].split(' ')[1]
       if token
         payload = decode(token)
-        @user = User.find_by(id: payload["user_id"])
+        user = User.find_by(id: payload["user_id"])
+        @user = User.user_info_to_send_back(user, user.favorites)
       end 
     end
   end

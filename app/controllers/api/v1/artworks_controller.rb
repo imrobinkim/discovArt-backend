@@ -35,9 +35,28 @@ class Api::V1::ArtworksController < ApplicationController
     render json: response
   end 
 
+  # Add/remove favorite artworks for current_user
+  def favorite
+    user = User.find(params[:user]["id"]) # Find logged in/current user.
+
+    # Only create new instance of artwork in OUR db if it doesn't exist yet.
+    # Otherwise, find artwork instance from within our db.
+    artwork = Artwork.exists?(params[:artwork]["id"]) ? Artwork.find(params[:artwork]["id"]) : Artwork.create(artwork_params)
+    
+    if user.favorites.include?(artwork)
+      user.favorites.delete(artwork)
+    else
+      user.favorites << artwork
+    end
+  end
+
   private 
 
   def api_key
     Rails.application.credentials.harvard_art_musuem_api
   end
+
+  def artwork_params
+    params.require(:artwork).permit(:id, :title, :people, :dated, :classification, :primaryimageurl)
+  end 
 end

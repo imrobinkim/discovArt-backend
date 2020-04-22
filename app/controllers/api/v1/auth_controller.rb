@@ -3,11 +3,12 @@ class Api::V1::AuthController < ApplicationController
 
   def create #POST /api/v1/login
     @user = User.find_by(email: user_login_params[:email])
+    @user_to_send = User.user_info_to_send_back(@user, @user.favorites) # add favorites info
 
     # If user exists & password after hashing and salting matches password_digest in db...
     if @user && @user.authenticate(user_login_params[:password])
       render json: {
-        user: @user,
+        user: @user_to_send,
         token: encode({ user_id: @user.id }),
         message: "Successfully logged in",
         error: false
